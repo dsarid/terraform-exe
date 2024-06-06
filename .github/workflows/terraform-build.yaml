@@ -6,6 +6,10 @@ on:
     branches:
       - main
 
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  
 jobs:
   terraform:
     runs-on: ubuntu-latest
@@ -18,16 +22,14 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.8.4
-
-      - name: create ssh key
+       
+      - name: Create ssh key
         run: |
           mkdir -p ~/.ssh
           echo ${{ secrets.SSH_KEY }} > ~/.ssh/tf-test.pub
         
       - name: Terraform Init
         run: |
-          export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
-          export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
           terraform init
 
       - name: Terraform Apply - Development
